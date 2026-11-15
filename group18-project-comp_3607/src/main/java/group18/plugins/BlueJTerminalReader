@@ -1,0 +1,65 @@
+package group18;
+
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.control.ToolBar;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+
+import java.util.Locale;
+import java.util.Optional;
+
+public class BlueJTerminalReader implements ConsoleTextSource {
+
+    @Override
+
+    public Optional<String> readConsoleText() {
+        for (Window window : Window.getWindows()) {
+            if (window instanceof Stage stage && isTerminal(stage) && stage.getScene() != null) {
+                StringBuilder text = new StringBuilder();
+                collect(stage.getScene().getRoot(), text);
+                return Optional.of(text.toString());
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static boolean isTerminal(Stage stage) {
+        String title = stage.getTitle();
+        return title != null && title.toLowerCase(Locale.ROOT).contains("terminal");
+    }
+//Reads through a JavaFX scene graph 
+    private static void collect(Node node, StringBuilder out) {
+        if (node == null ||node instanceof MenuBar || node instanceof ToolBar || node instanceof Labeled) {
+            return;
+        }
+        if (node instanceof TextInputControl input) {
+            append(out, input.getText());
+            return;
+        }
+        if (node instanceof Text text) {
+            append(out, text.getText());
+            return;
+        }
+        if (node instanceof Parent parent) {
+            for (Node child : parent.getChildrenUnmodifiable()) {
+                collect(child, out);
+            }
+        }
+    }
+
+    private static void append(StringBuilder out, String text) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        out.append(text);
+        if (!text.endsWith("\n")) {
+            out.append('\n');
+        }
+    }
+}
+
