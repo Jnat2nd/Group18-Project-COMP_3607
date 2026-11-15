@@ -1,4 +1,4 @@
-package group18;
+package group18.listener;
 //Sources: https://www.javacodegeeks.com/getting-started-with-java-diff-utils.html
 
 public final class TextDiff{

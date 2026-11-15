@@ -1,5 +1,5 @@
 
-package group18;
+package group18.plugins;
 
 import bluej.extensions2.BlueJ;
 import bluej.extensions2.Extension;
@@ -13,7 +13,7 @@ import java.time.Duration;
 public class BlueJTelemetryExtension extends Extension {
 
     static final String Student_ID_Property="studentID";
-    static Final Duration Sample_Period =Duration.ofSeconds(10);
+    static final Duration Sample_Period =Duration.ofSeconds(10);
     static final Duration SHUTDOWN_Timeout =Duration.ofSeconds(20);
 
     private TelemetryPluginFacade facade;
