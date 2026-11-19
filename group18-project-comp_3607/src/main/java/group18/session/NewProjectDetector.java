@@ -31,8 +31,7 @@ public final class NewProjectDetector {
             if (files.anyMatch(file -> file.getFileName().toString().endsWith(".java"))) {
                 return false;
             }
-            Instant created = Files.readAttributes(projectDirectory, BasicFileAttributes.class)
-                    .creationTime().toInstant();
+            Instant created = Files.readAttributes(projectDirectory, BasicFileAttributes.class) .creationTime().toInstant();
             return isRecent(created, openedAt);
         } catch (IOException e) {
             return false;
