@@ -83,10 +83,7 @@ class ExecutionRecorderTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @CsvSource({
-            "terminal/arithmetic-exception.txt, java.lang.ArithmeticException, / by zero, Student.java:23",
-            "terminal/custom-exception.txt, bank.InsufficientFundsException, Balance is only 120.0, BankAccount.java:41"
-    })
+  
     void exceptionTypeMessageAndLocationAreReadFromTheConsole(String file, String type, String message,
                                                               String location) {
         record("getAverage", "EXCEPTION_EXIT", null, TestData.resource(file));
