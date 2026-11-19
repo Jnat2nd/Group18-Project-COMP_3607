@@ -1,5 +1,6 @@
 package group18.analytics;
 
+import group18.analytics.calculators.MetricCalculator;
 import group18.model.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +8,8 @@ import java.util.Collections;
 
 public class TelemetryAggregator {
     //holds incoming events during a session
-    private final List<TelemetryEvent> events = new ArrayList<>();
+    private final MetricCalculator<TimeMetrics> timeCalc;
+
 
     public void addEvent (TelemetryEvent event){
         if (event != null) {
@@ -20,5 +22,4 @@ public class TelemetryAggregator {
     }
 
 
-    //TODO: method relating to typing cadence?
 }
