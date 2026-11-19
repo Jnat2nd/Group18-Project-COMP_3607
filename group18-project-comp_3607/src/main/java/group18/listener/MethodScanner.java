@@ -10,31 +10,36 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public final class MethodScanner {
 
-    private static final Set<String> MODIFIER_WORDS = Set.of("public", "protected", "private", "static", "final", "abstract", "synchronized", "native", "default", "strictfp", "transient", "volatile");
+    private static final Set<String> MODIFIER_WORDS = Set.of("public", "protected", "private", "static", "final",
+            "abstract", "synchronized", "native", "default", "strictfp", "transient", "volatile");
 
-    private static final String MODIFIERS = "(?:(?:public|protected|private|static|final|abstract|synchronized|native|default|strictfp)\\s+)*";
+    private static final String MODIFIERS ="(?:(?:public|protected|private|static|final|abstract|synchronized|native|default|strictfp)\\s+)*";
 
     private static final String TYPE_PARAMETERS = "(?:<[^<>]*(?:<[^<>]*>[^<>]*)*>\\s*)?";
 
     private static final String THROWS = "(?:\\s*throws\\s+[\\w$.,\\s<>]+)?";
 
-    private static final Pattern TYPE_DECLARATION = Pattern.compile("^(?:[\\w-]+\\s+)*?(?:class|interface|enum|record|@interface)\\s+([A-Za-z_$][\\w$]*)");
+    private static final Pattern TYPE_DECLARATION =Pattern.compile("^(?:[\\w-]+\\s+)*?(?:class|interface|enum|record|@interface)\\s+([A-Za-z_$][\\w$]*)");
 
     private static final Pattern METHOD = Pattern.compile("^" + MODIFIERS + TYPE_PARAMETERS+ "([\\w$.]+(?:\\s*<.*>)?(?:\\s*\\[\\s*\\])*)\\s+([A-Za-z_$][\\w$]*)\\s*\\(([^()]*)\\)"+ "(?:\\s*\\[\\s*\\])*" + THROWS + "$");
 
-    private static final Pattern CONSTRUCTOR = Pattern.compile("^" + MODIFIERS + TYPE_PARAMETERS  + "([A-Za-z_$][\\w$]*)\\s*\\(([^()]*)\\)" + THROWS + "$");
+    private static final Pattern CONSTRUCTOR = Pattern.compile("^" + MODIFIERS + TYPE_PARAMETERS
+            + "([A-Za-z_$][\\w$]*)\\s*\\(([^()]*)\\)" + THROWS + "$");
 
     private static final Pattern ANNOTATION = Pattern.compile("@(?!interface\\b)[\\w$.]+(?:\\s*\\([^()]*\\))?");
 
-    private static final Pattern PARAMETER = Pattern.compile("^(.*?)([A-Za-z_$][\\w$]*)\\s*((?:\\[\\s*\\])*)$");
+    private static final Pattern PARAMETER =
+            Pattern.compile("^(.*?)([A-Za-z_$][\\w$]*)\\s*((?:\\[\\s*\\])*)$");
 
     private MethodScanner() {
     }
 
     private record Scope(boolean isType, String name) {
     }
+
 
     public static Set<String> scan(String source) {
         Set<String> found = new TreeSet<>();
@@ -82,7 +87,6 @@ public final class MethodScanner {
         return found;
     }
 
-    
     private static void record(Set<String> found, Deque<Scope> scopes, String signature) {
         if (signature == null) {
             return;
@@ -93,6 +97,7 @@ public final class MethodScanner {
         }
     }
 
+    
     private static String declaration(String header, String typeName, boolean hasBody) {
         if (header.isEmpty() || header.contains("=")) {
             return null;
@@ -110,6 +115,7 @@ public final class MethodScanner {
         return null;
     }
 
+    
     private static String prefix(Deque<Scope> scopes) {
         List<String> names = new ArrayList<>();
         Iterator<Scope> outermostFirst = scopes.descendingIterator();
@@ -125,6 +131,8 @@ public final class MethodScanner {
         }
         return String.join(".", names.subList(1, names.size())) + ".";
     }
+
+    
     static String parameterTypes(String parameters) {
         if (parameters.isBlank()) {
             return "";
@@ -134,10 +142,14 @@ public final class MethodScanner {
             String text = parameter.strip().replaceAll("\\bfinal\\s+", "");
             Matcher m = PARAMETER.matcher(text);
             String type = m.matches() && !m.group(1).isBlank() ? m.group(1) + m.group(3) : text;
-            types.add(type.replaceAll("\\s+", " ").strip().replaceAll("\\s*([<>\\[\\],])\\s*", "$1") .replaceAll("\\s*\\.\\.\\.", "...") .replace(",", ", "));
+            types.add(type.replaceAll("\\s+", " ").strip()
+                    .replaceAll("\\s*([<>\\[\\],])\\s*", "$1")
+                    .replaceAll("\\s*\\.\\.\\.", "...")
+                    .replace(",", ", "));
         }
         return String.join(", ", types);
     }
+
     private static List<String> splitTopLevel(String text) {
         List<String> parts = new ArrayList<>();
         int depth = 0;
@@ -161,6 +173,8 @@ public final class MethodScanner {
         String text = ANNOTATION.matcher(header).replaceAll(" ");
         return text.replaceAll("\\s+", " ").strip();
     }
+
+    
     static String stripCommentsAndLiterals(String source) {
         StringBuilder out = new StringBuilder(source.length());
         int i = 0;
@@ -191,6 +205,7 @@ public final class MethodScanner {
         return out.toString();
     }
 
+    
     private static int skipLiteral(String source, int start, char quote) {
         int i = start + 1;
         while (i < source.length() && source.charAt(i) != quote && source.charAt(i) != '\n') {

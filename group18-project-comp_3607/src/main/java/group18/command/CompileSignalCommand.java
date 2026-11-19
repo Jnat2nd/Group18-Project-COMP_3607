@@ -1,24 +1,32 @@
 package group18.command;
 
-import a CompileAttemptTracker
-import A CompileSignal
+import java.util.List;
+import java.util.Objects;
+
+import group18.listener.CompileSignal;
+import group18.session.ProjectSession;
+import group18.session.SessionRegistry;
 
 
-public class CompileSignalCommand implements TelemetryCommand {
+public final class CompileSignalCommand implements TelemetryCommand {
 
+    private final SessionRegistry registry;
     private final CompileSignal signal;
-    private final CompileAttemptTracker tracker;
-    private final EventSink sink;
 
-    public CompileSignalCommand(CompileSignal signal, CompileAttemptTracker tracker, EventSink sink) {
-        this.signal = signal;
-        this.tracker = tracker;
-        this.sink = sink;
+
+    public CompileSignalCommand(SessionRegistry registry, CompileSignal signal) {
+        this.registry = Objects.requireNonNull(registry, "registry");
+        this.signal = Objects.requireNonNull(signal, "signal");
     }
 
-    
     @Override
     public void execute() {
-        tracker.accept(signal).ifPresent(sink::publish);
+        List<ProjectSession> targets = registry.owning(signal.files());
+        if (targets.isEmpty() && signal.phase() != CompileSignal.Phase.STARTED) {
+            targets = registry.all().stream().filter(ProjectSession::compileInProgress).toList();
+        }
+        for (ProjectSession session : targets) {
+            session.handleCompileSignal(signal);
+        }
     }
 }

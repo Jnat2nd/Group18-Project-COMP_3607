@@ -1,11 +1,11 @@
 package group18.listener;
 
 // Sources:
-//  https://www.bluej.org/doc/extensionsAPI2/bluej/extensions2/event/CompileEvent.html (BlueJ gives the message only)
-//  javac's compiler.properties for the diagnostic keys
+//  https://www.bluej.org/doc/extensionsAPI2/bluej/extensions2/event/CompileEvent.html
 
 import java.util.List;
 import java.util.regex.Pattern;
+
 
 public final class ErrorCodes {
 
@@ -15,7 +15,7 @@ public final class ErrorCodes {
     private record Rule(Pattern pattern, String code, String label) {
     }
 
-    //rules to use 
+    /** Rules in priority order; the first match wins. */
     private static final List<Rule> RULES = List.of(
             rule("'.{1,12}?' expected|<identifier> expected", "compiler.err.expected",
                     "Missing symbol (e.g. ';' or ')')"),
@@ -80,6 +80,7 @@ public final class ErrorCodes {
     private static Rule rule(String regex, String code, String label) {
         return new Rule(Pattern.compile(regex, Pattern.CASE_INSENSITIVE), code, label);
     }
+
 
     public static String code(String message) {
         if (message != null) {

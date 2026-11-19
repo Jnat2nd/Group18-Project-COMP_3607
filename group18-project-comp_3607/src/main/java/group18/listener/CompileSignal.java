@@ -5,14 +5,18 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 
+
 public record CompileSignal(Phase phase, List<Path> files, int lineNumber, String message, Instant timestamp) {
 
+
     public enum Phase {
+
         STARTED,
         ERROR,
         SUCCEEDED,
         FAILED
     }
+
 
     public CompileSignal {
         Objects.requireNonNull(phase, "phase");
@@ -20,9 +24,11 @@ public record CompileSignal(Phase phase, List<Path> files, int lineNumber, Strin
         files = files == null ? List.of() : List.copyOf(files);
     }
 
+
     public static CompileSignal started(List<Path> files, Instant at) {
         return new CompileSignal(Phase.STARTED, files, 0, null, at);
     }
+
 
     public static CompileSignal error(Path file, int line, String message, Instant at) {
         return new CompileSignal(Phase.ERROR, file == null ? List.of() : List.of(file), line, message, at);

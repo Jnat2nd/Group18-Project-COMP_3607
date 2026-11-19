@@ -1,7 +1,5 @@
 package group18.listener;
 
-import group18.model.EditorEvent;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -12,29 +10,28 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import group18.model.EditorEvent;
+
+
 public final class EditorActivityTracker {
 
     public static final Duration DEFAULT_IDLE_THRESHOLD = Duration.ofSeconds(60);
     public static final int PASTE_THRESHOLD = 30;
-
     private final String sessionId;
     private final EventSink sink;
     private final long idleThresholdMs;
-    private Instant intervalStart;
-    private Instant lastActivity;
+    private Instant intervalStart,lastActivity, idleSince;
     private final List<Instant> activity = new ArrayList<>();
     private final Set<String> classesEdited = new TreeSet<>();
     private final Set<String> classesWithKeystrokes = new HashSet<>();
-    private int edits;
-    private int typed;
-    private int pasted;
-    private int deleted;
-    private Instant idleSince;
+    private int edits, typed, pasted, deleted;   
     private long pendingIdleMs;
+
 
     public EditorActivityTracker(String sessionId, EventSink sink, Instant start) {
         this(sessionId, sink, start, DEFAULT_IDLE_THRESHOLD);
     }
+
 
     public EditorActivityTracker(String sessionId, EventSink sink, Instant start, Duration idleThreshold) {
         this.sessionId = Objects.requireNonNull(sessionId, "sessionId");
@@ -46,6 +43,7 @@ public final class EditorActivityTracker {
         this.intervalStart = Objects.requireNonNull(start, "start");
         this.lastActivity = start;
     }
+
 
     public void recordEdit(String className, int removedChars, int insertedChars, Instant at) {
         edits++;
@@ -60,6 +58,7 @@ public final class EditorActivityTracker {
         noteActivity(at);
     }
 
+
     public void noteActivity(Instant at) {
         if (at.isBefore(intervalStart)) {
             if (lastActivity == null || at.isAfter(lastActivity)) {
@@ -69,6 +68,7 @@ public final class EditorActivityTracker {
             activity.add(at);
         }
     }
+
 
     public void closeInterval(Instant end, SampleDiff diff) {
         for (Map.Entry<String, TextDiff.Change> change : diff.changes().entrySet()) {
@@ -90,11 +90,11 @@ public final class EditorActivityTracker {
             pendingIdleMs += intervalMs;
         } else {
             publishPendingIdle();
-            sink.publish(new EditorEvent(sessionId, stop, intervalMs, activeMs, intervalMs - activeMs, edits, typed,
-                    pasted, deleted, new ArrayList<>(classesEdited)));
+            sink.publish(new EditorEvent(sessionId, stop, intervalMs, activeMs, intervalMs - activeMs, edits, typed, pasted, deleted, new ArrayList<>(classesEdited)));
         }
         startNextInterval(stop);
     }
+
 
     public void flush(Instant end) {
         closeInterval(end, SampleDiff.NONE);
@@ -124,6 +124,7 @@ public final class EditorActivityTracker {
         idleSince = null;
         pendingIdleMs = 0;
     }
+
 
     private long activeMillis(Instant end) {
         long from = intervalStart.toEpochMilli();

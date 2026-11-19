@@ -6,7 +6,5 @@ import java.util.concurrent.CompletableFuture;
 
 
 public interface ReportTelemetry {
-
-    
     CompletableFuture<List<Path>> exportNow(String projectKey);
 }

@@ -12,6 +12,7 @@ import group18.model.ProjectRef;
 import java.io.File;
 import java.util.Optional;
 
+
 final class BlueJProjects {
 
     private BlueJProjects() {
@@ -20,8 +21,7 @@ final class BlueJProjects {
     static Optional<ProjectRef> refOf(BProject project) {
         if (project == null) {
             return Optional.empty();
-        }
-        try {
+        }try {
             File directory = project.getDir();
             return directory == null ? Optional.empty()
                     : Optional.of(ProjectRef.of(project.getName(), directory.toPath()));
@@ -30,17 +30,18 @@ final class BlueJProjects {
         }
     }
 
+    
     static Optional<ProjectRef> refOf(BPackage pkg) {
         if (pkg == null) {
             return Optional.empty();
-        }
-        try {
+        }try {
             return refOf(pkg.getProject());
         } catch (ExtensionException | RuntimeException e) {
             return Optional.empty();
         }
     }
 
+    
     static boolean isTopLevel(BPackage pkg) {
         try {
             String name = pkg.getName();

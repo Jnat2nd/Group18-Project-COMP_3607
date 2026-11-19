@@ -8,12 +8,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 
-public interface ProjectTelemetry {
-
+public interface ProjectTelemetry { 
     CompletableFuture<Void> projectOpened(ProjectRef project);
-
     CompletableFuture<List<Path>> projectClosed(String projectKey);
-
-   
     CompletableFuture<List<Path>> openProjectsChanged(Set<String> openProjectKeys);
 }

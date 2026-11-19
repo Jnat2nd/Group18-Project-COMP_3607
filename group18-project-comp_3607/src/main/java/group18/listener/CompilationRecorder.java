@@ -3,9 +3,6 @@ package group18.listener;
 // Sources:
 //  https://www.bluej.org/doc/extensionsAPI2/bluej/extensions2/event/CompileListener.html
 
-import group18.model.CompilationError;
-import group18.model.CompilationEvent;
-
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -13,8 +10,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public final class CompilationRecorder {
+import group18.model.CompilationError;
+import group18.model.CompilationEvent;
 
+
+public final class CompilationRecorder {
     private final String sessionId;
     private final EventSink sink;
     private final Set<String> files = new LinkedHashSet<>();
@@ -26,6 +26,7 @@ public final class CompilationRecorder {
         this.sink = Objects.requireNonNull(sink, "sink");
     }
 
+
     public void handle(CompileSignal signal) {
         switch (signal.phase()) {
             case STARTED -> start(signal);
@@ -33,6 +34,7 @@ public final class CompilationRecorder {
             case SUCCEEDED, FAILED -> finish(signal);
         }
     }
+
 
     public boolean inProgress() {
         return inProgress;

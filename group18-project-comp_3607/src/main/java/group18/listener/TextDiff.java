@@ -2,7 +2,6 @@ package group18.listener;
 
 // Idea adapted from: https://www.javacodegeeks.com/getting-started-with-java-diff-utils.html
 
-
 public final class TextDiff {
 
     private TextDiff() {
@@ -10,11 +9,12 @@ public final class TextDiff {
 
     public record Change(int removed, int inserted) {
         public static final Change NONE = new Change(0, 0);
-
+       
         public boolean isEmpty() {
             return removed == 0 && inserted == 0;
         }
     }
+
 
     public static Change between(String before, String after) {
         String a = before == null ? "" : before;

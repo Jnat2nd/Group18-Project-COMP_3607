@@ -19,21 +19,12 @@ public final class BlueJTelemetryExtension extends Extension {
 
     
     static final String VERSION = "1.0.0";
-
-  
     static final Duration SAMPLE_PERIOD = Duration.ofSeconds(10);
-
-    
     static final Duration SHUTDOWN_TIMEOUT = Duration.ofSeconds(20);
-
     private static final Logger LOG = Logger.getLogger(BlueJTelemetryExtension.class.getName());
-
     private TelemetryPluginFacade facade;
-
-    
     private SourceSampler sampler;
 
-   
     public BlueJTelemetryExtension() {
         
     }
