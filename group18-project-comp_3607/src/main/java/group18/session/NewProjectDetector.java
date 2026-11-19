@@ -24,8 +24,7 @@ public final class NewProjectDetector {
     }
 
     public boolean isNewlyCreated(Path projectDirectory, Instant openedAt) {
-        if (!Files.isDirectory(projectDirectory)
-                || Files.exists(projectDirectory.resolve(OutputDirectories.FOLDER_NAME))) {
+        if (!Files.isDirectory(projectDirectory) || Files.exists(projectDirectory.resolve(OutputDirectories.FOLDER_NAME))) {
             return false;
         }
         try (Stream<Path> files = Files.list(projectDirectory)) {
