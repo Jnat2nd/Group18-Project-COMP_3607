@@ -1,0 +1,32 @@
+package edu.uwi.comp3607.telemetry.model;
+//resource: https://stackoverflow.com/questions/11536995/create-jasper-report-pdf-form-from-json-object-or-json-string 
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+
+public record SessionReport(SessionMetadata sessionMetadata,Summary summary,List<TimelineEntry> timeline,List<TelemetryEvent> events) {
+    public static final String SCHEMA_VERSION = "1.1";
+
+    public SessionReport {
+        timeline = timeline == null ? List.of() : List.copyOf(timeline);
+        events = events == null ? List.of() : List.copyOf(events);
+    }
+
+    public record SessionMetadata(String schemaVersion, String sessionId,String studentId,Instant startTime,Instant endTime,
+                                  long totalSessionDurationSeconds,int totalCompilationAttempts,int totalEvents,boolean recoveredFromBackup) {
+    }
+
+    //Saw something similar to this in the source from stack overflow
+    public record Summary(long activeCodingSeconds,long idleSeconds,int idlePeriods,int successfulCompilations,
+                          int failedCompilations,double compileSuccessRatePercent,double compileErrorRatePercent,
+                          int compilationErrorCount,  List<Long> secondsBetweenCompiles,double averageSecondsBetweenCompiles,
+                          Map<String, Integer> errorFrequencyByType, Map<String, Integer> errorFrequencyByCode, int programRuns,
+                          int runtimeExceptions,Map<String, Integer> runtimeExceptionTypes,
+                          double compileToRunRatio,int edits,double editsPerActiveMinute,
+                          long charactersChanged,double averageTypingCadenceCharsPerSecond,
+                          int classesCreated,int classesModified,int classesDeleted,
+                          int methodsAdded,int methodsRemoved) {
+    }
+    public record TimelineEntry(Instant timestamp, String action, String className, String member) {
+    }
+}
