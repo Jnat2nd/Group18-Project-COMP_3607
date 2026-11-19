@@ -1,0 +1,8 @@
+package group18.export;
+
+public final class TelemetryJson {
+
+    private TelemetryJson() {
+    }
+
+}
