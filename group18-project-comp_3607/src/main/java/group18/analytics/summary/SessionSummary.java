@@ -6,6 +6,7 @@ import java.util.List;
 
 public record SessionSummary(
     String sessionId,
+    String studentId,
     Instant start,
     Instant end,
     TimeMetrics time,
