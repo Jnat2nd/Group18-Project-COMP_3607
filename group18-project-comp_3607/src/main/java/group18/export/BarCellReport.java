@@ -1,0 +1,7 @@
+package group18.export;
+
+import java.awt.Color;
+import java.util.List;
+
+
+class BarCellReport

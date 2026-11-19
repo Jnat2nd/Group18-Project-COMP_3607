@@ -1,0 +1,18 @@
+//Resource that helped https://www.geeksforgeeks.org/javascript/how-to-detect-idle-time-in-javascript/
+package group18.command;
+
+import group18.model.TelemetryEvent;
+
+import java.time.Instant;
+import java.util.List;
+
+public interface EventSink {
+
+    void publish(TelemetryEvent event);
+
+    default void publishAll(List<TelemetryEvent> events) {
+        events.forEach(this::publish);
+    }
+
+    void tick(Instant now);
+}
