@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>edu.uwi.comp3607</groupId>
+    <artifactId>bluej-telemetry-plugin</artifactId>
+    <version>1.1.0</version>
+    <packaging>jar</packaging>
+    <name>BlueJ Telemetry Plugin</name>
+    <description>COMP3607 BlueJ 5 extension that records telemetry and exports JSON and PDF reports.</description>
+
+    <!--
+        Two ways to build:
+          mvn verify        -> compiles the core, runs the JUnit 5 suites, enforces 75% line coverage.
+                               Works on any machine; BlueJ is not needed.
+          mvn package       -> with lib/bluej.jar present (copied from your BlueJ install), the "bluej" profile
+                               switches on automatically, compiles the BlueJ adapters too and builds
+                               target/bluej-telemetry-plugin-1.1.0.jar to drop into BlueJ's extensions2 folder.
+    -->
+
+    <properties>
+        <!-- BlueJ 5.0-5.2 bundle JDK 17 and 5.3+ bundle JDK 21: target 17 so the jar runs on both. -->
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <jackson.version>2.17.2</jackson.version>
+        <!-- OpenPDF 2.0.x is the last line with the com.lowagie packages that still runs on Java 17. -->
+        <openpdf.version>2.0.3</openpdf.version>
+        <javafx.version>17.0.11</javafx.version>
+        <junit.version>5.10.3</junit.version>
+        <junit.platform.version>1.10.3</junit.platform.version>
+        <jacoco.version>0.8.12</jacoco.version>
+        <coverage.minimum>0.75</coverage.minimum>
+
+        <!-- Where the bluej profile finds the BlueJ extensions API (not on Maven Central). -->
+        <bluej.jar>${project.basedir}/lib/bluej.jar</bluej.jar>
+        <!-- The BlueJ adapters need bluej.jar, so they are skipped unless the bluej profile is active. -->
+        <bluej.adapters.exclude>edu/uwi/comp3607/telemetry/plugin/**</bluej.adapters.exclude>
+    </properties>
+
+    <dependencies>
+        <!-- Extension build-->
+        <dependency>
+            <groupId>org.bluej</groupId>
+            <artifactId>bluejcore</artifactId>
+            <version>5.0</version>
+            <scope>system</scope>
+            <systemPath>C:/Program Files/BlueJ/lib/bluejcore.jar</systemPath>
+        </dependency>
+        <!-- JSON serialisation and crash-recovery backup -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- PDF report -->
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>${openpdf.version}</version>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <version>${junit.platform.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <excludes>
+                        <exclude>${bluej.adapters.exclude}</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <!-- Replace with your package and Extension subclass -->
+                            <mainClass>edu.uwi.comp3607.telemetry.plugin.BlueJTelemetryExtension</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <!-- Surefire runs each test class; TelemetryTestSuite is for running everything from an IDE. -->
+                    <excludes>
+                        <exclude>**/TelemetryTestSuite.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- Coverage: HTML report on `mvn test` (target/site/jacoco), >= 75% line coverage enforced on `mvn verify`. -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
+                        <!-- Thin BlueJ/JavaFX adapters: they need a running BlueJ, so they are tested by hand. -->
+                        <exclude>edu/uwi/comp3607/telemetry/plugin/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${coverage.minimum}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- Active automatically when lib/bluej.jar exists; or force it with -Pbluej -Dbluej.jar=/path/to/bluej.jar -->
+            <id>bluej</id>
+            <properties>
+                <!-- matches nothing, so the BlueJ adapters are compiled -->
+                <bluej.adapters.exclude>nothing-excluded/**</bluej.adapters.exclude>
+            </properties>
+            <activation>
+                <file>
+                    <exists>${basedir}/lib/bluej.jar</exists>
+                </file>
+            </activation>
+            <dependencies>
+                <!-- BlueJ 5 extensions API (bluej.extensions2). Supplied by BlueJ at runtime. -->
+                <dependency>
+                    <groupId>org.bluej</groupId>
+                    <artifactId>bluej</artifactId>
+                    <version>5</version>
+                    <scope>system</scope>
+                    <systemPath>${bluej.jar}</systemPath>
+                </dependency>
+                <!-- JavaFX (menus, alerts, FX thread). Supplied by BlueJ at runtime. -->
+                <dependency>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-controls</artifactId>
+                    <version>${javafx.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <!-- One self-contained jar for BlueJ's extensions2 folder: bundles Jackson and OpenPDF. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                                    <relocations>
+                                        <!-- Avoid clashing with any Jackson copy on BlueJ's own classpath. -->
+                                        <relocation>
+                                            <pattern>com.fasterxml.jackson</pattern>
+                                            <shadedPattern>edu.uwi.comp3607.telemetry.shaded.jackson</shadedPattern>
+                                        </relocation>
+                                    </relocations>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>module-info.class</exclude>
+                                                <exclude>META-INF/versions/*/module-info.class</exclude>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>edu.uwi.comp3607.telemetry.plugin.BlueJTelemetryExtension</mainClass>
+                                        </transformer>
+                                    </transformers>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
