@@ -16,15 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Reads the text of BlueJ's terminal window by walking its JavaFX scene graph. Must be called on the JavaFX thread.
- *
- * <p>The extension API has no access to the terminal, so the window is found by its title
- * ({@code "BlueJ: Terminal Window - <project>"}). BlueJ's terminal panes have a public {@code getLines()} method
- * that returns all of their text, including lines scrolled out of view; it is called by reflection so the plugin
- * does not depend on BlueJ's internal classes. If that method is not available, the visible text nodes are read
- * instead.</p>
- */
 final class BlueJTerminalReader implements ConsoleTextSource {
 
     /** Creates a reader. It keeps no state; each call searches the open windows again. */
