@@ -1,0 +1,4 @@
+java.lang.StackOverflowError
+	at Factorial.compute(Factorial.java:7)
+	at Factorial.compute(Factorial.java:7)
+	at Factorial.compute(Factorial.java:7)

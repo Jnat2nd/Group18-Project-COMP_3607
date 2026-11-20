@@ -1,0 +1,4 @@
+Withdrawing 500.0 from Ana
+Exception in thread "main" bank.InsufficientFundsException: Balance is only 120.0
+	at bank.BankAccount.withdraw(BankAccount.java:41)
+	at bank.Bank.main(Bank.java:12)

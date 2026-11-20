@@ -1,0 +1,21 @@
+// Test data for MethodScanner: half-typed code that does not compile.
+public class Student
+{
+    private String name;
+    private int count
+
+    public Student(String name)
+    {
+        this.name = name;
+    }
+
+    public double getAverage()
+    {
+        for (int i = 0; i < count; i++) {
+            total = total + 1;
+    }
+
+    public String getName()
+    {
+        return name;
+    }

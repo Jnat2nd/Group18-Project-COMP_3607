@@ -1,0 +1,5 @@
+Average of 0 grades:
+java.lang.ArithmeticException: / by zero
+	at Student.getAverage(Student.java:23)
+	at __SHELL4.run(__SHELL4.java:6)
+	at bluej.runtime.ExecServer$3.lambda$run$0(ExecServer.java:849)

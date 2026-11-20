@@ -1,0 +1,48 @@
+# Real javac messages as BlueJ reports them, and the diagnostic code each should be classified as.
+message,expectedCode
+"';' expected",compiler.err.expected
+"')' expected",compiler.err.expected
+"'(' or '[' expected",compiler.err.expected
+"<identifier> expected",compiler.err.expected
+"class, interface, enum, or record expected",compiler.err.expected4
+"class, interface, or enum expected",compiler.err.expected4
+"cannot find symbol",compiler.err.cant.resolve
+"incompatible types: String cannot be converted to int",compiler.err.prob.found.req
+"incompatible types: possible lossy conversion from double to int",compiler.err.prob.found.req
+"incompatible types: unexpected return value",compiler.err.prob.found.req
+"missing return statement",compiler.err.missing.ret.stmt
+"reached end of file while parsing",compiler.err.premature.eof
+"unreachable statement",compiler.err.unreachable.stmt
+"variable total might not have been initialized",compiler.err.var.might.not.have.been.initialized
+"variable count is already defined in method addGrade(int)",compiler.err.already.defined
+"non-static variable count cannot be referenced from a static context",compiler.err.non-static.cant.be.ref
+"non-static method add(int,int) cannot be referenced from a static context",compiler.err.non-static.cant.be.ref
+"method deposit in class BankAccount cannot be applied to given types;",compiler.err.cant.apply.symbol
+"constructor Student in class Student cannot be applied to given types;",compiler.err.cant.apply.symbol
+"no suitable method found for println(int,int)",compiler.err.cant.apply.symbols
+"illegal start of expression",compiler.err.illegal.start.of.expr
+"illegal start of type",compiler.err.illegal.start.of.type
+"not a statement",compiler.err.not.stmt
+"unclosed string literal",compiler.err.unclosed.str.lit
+"unclosed character literal",compiler.err.unclosed.char.lit
+"empty character literal",compiler.err.empty.char.lit
+"unclosed comment",compiler.err.unclosed.comment
+"unreported exception java.io.IOException; must be caught or declared to be thrown",compiler.err.unreported.exception.need.to.catch.or.throw
+"class Calc is public, should be declared in a file named Calc.java",compiler.err.class.public.should.be.in.file
+"balance has private access in BankAccount",compiler.err.report.access
+"bad operand types for binary operator '&&'",compiler.err.operator.cant.be.applied.1
+"bad operand type String for unary operator '!'",compiler.err.operator.cant.be.applied
+"int cannot be dereferenced",compiler.err.cant.deref
+"array required, but int found",compiler.err.array.req.but.found
+"cannot assign a value to final variable MAX",compiler.err.cant.assign.val.to.var
+"Shape is abstract; cannot be instantiated",compiler.err.abstract.cant.be.instantiated
+"Circle is not abstract and does not override abstract method area() in Shape",compiler.err.does.not.override.abstract
+"invalid method declaration; return type required",compiler.err.invalid.meth.decl.ret.type.req
+"missing method body, or declare abstract",compiler.err.missing.meth.body.or.decl.abstract
+"'else' without 'if'",compiler.err.else.without.if
+"break outside switch or loop",compiler.err.break.outside.switch.loop
+"illegal character: '#'",compiler.err.illegal.char
+"variable declaration not allowed here",compiler.err.variable.not.allowed
+"duplicate class: Student",compiler.err.duplicate.class
+"variable x might already have been assigned",compiler.err.var.might.already.be.assigned
+"something a future javac might say",UNCLASSIFIED

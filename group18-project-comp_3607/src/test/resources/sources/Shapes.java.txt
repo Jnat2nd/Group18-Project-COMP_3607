@@ -1,0 +1,116 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Test data for MethodScanner: a class using most declaration forms a student might write.
+ * A comment with code in it must be ignored: public void fakeMethod() { }
+ */
+public class Shapes extends Object implements Comparable<Shapes>
+{
+    private static final String NAME = "shapes { not a block } ; public void notAMethod() {";
+    private final List<String> names = new ArrayList<>();
+    private Runnable task = () -> {
+        System.out.println("lambda body; public void insideLambda() {}");
+    };
+    private int[] sizes = {1, 2, 3};
+    private char brace = '{';
+
+    static {
+        System.out.println("static initialiser");
+    }
+
+    public Shapes()
+    {
+        this(10);
+    }
+
+    public Shapes(final int capacity)
+    {
+        // constructor overload
+    }
+
+    @Override
+    public int compareTo(Shapes other)
+    {
+        return 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Comparable<T>> T largest(List<? extends T> items, T fallback)
+    {
+        Runnable r = new Runnable() {
+            public void run() {
+                // methods of anonymous classes are not part of Shapes
+            }
+        };
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i) == null) {
+                continue;
+            }
+        }
+        return fallback;
+    }
+
+    public Map<String, List<Integer>> group(String... words) throws IllegalArgumentException
+    {
+        return null;
+    }
+
+    int[] sizes()
+    {
+        return sizes;
+    }
+
+    protected abstract static class Shape
+    {
+        abstract double area();
+
+        public String describe(String prefix, int decimals)
+        {
+            return prefix + area();
+        }
+    }
+
+    private interface Visitor
+    {
+        void visit(Shape shape);
+
+        default boolean accepts(Object o)
+        {
+            return o != null;
+        }
+    }
+
+    enum Colour
+    {
+        RED("r"), GREEN("g");
+
+        private final String code;
+
+        Colour(String code)
+        {
+            this.code = code;
+        }
+
+        String code()
+        {
+            return code;
+        }
+    }
+
+    record Point(int x, int y)
+    {
+        public Point
+        {
+            if (x < 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+
+        double distance(Point other)
+        {
+            return 0;
+        }
+    }
+}
